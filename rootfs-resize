@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 #
 #   rootfs-resize :: Resize the root parition and filesytem
 #
@@ -44,12 +44,12 @@
 #   - python 2.7+ (python)
 #   - pyparted (pyparted)
 #   - psutil (python-psutil)
-#   - /sbin/resize2fs (e2fsprogs)
-#   - /sbin/mkswap (util-linux)
+#   - /usr/sbin/resize2fs (e2fsprogs)
+#   - /usr/sbin/mkswap (util-linux)
 #
 #   Optional requirements (recommended):
 #   - /usr/bin/ionice (util-linux)
-#   - /sbin/swapon (util-linux)
+#   - /usr/sbin/swapon (util-linux)
 
 #   Copyright (C)2013 Chris Tyler, Seneca College, and others 
 #   (see Authors, above).
@@ -165,7 +165,7 @@ if os.path.isfile('/.rootfs-repartition'):
             pass
 
     else:
-        print 'Unable to resize root partition (max size, or unresizable fs type).'
+        print('Unable to resize root partition (max size, or unresizable fs type).')
 
     # Change flagfiles and reboot
     open('/.rootfs-resize','w').close()
@@ -178,9 +178,9 @@ elif os.path.isfile('/.rootfs-resize'):
 
     # Use ionice if available
     if os.path.isfile('/usr/bin/ionice'):
-        os.system('/usr/bin/ionice -c2 -n7 /sbin/resize2fs %s' % root_device )
+        os.system('/usr/bin/ionice -c2 -n7 /usr/sbin/resize2fs %s' % root_device )
     else:
-        os.system('/sbin/resize2fs %s' % root_device )
+        os.system('/usr/sbin/resize2fs %s' % root_device )
 
     # Create swap if requested
     if os.path.isfile('/.swapsize'):
@@ -207,7 +207,7 @@ elif os.path.isfile('/.rootfs-resize'):
                 swapfile.write(MB)
 
             # Make it a swapfile
-            os.system('/sbin/mkswap /swap0.part')
+            os.system('/usr/sbin/mkswap /swap0.part')
 
             # Rename the swapfile to /swap0
             os.rename('/swap0.part','/swap0')
@@ -225,8 +225,8 @@ elif os.path.isfile('/.rootfs-resize'):
             fstab.close()
 
         # Activate all swap spaces if possible
-        if os.path.isfile('/sbin/swapon'):
-            os.system('/sbin/swapon -a')
+        if os.path.isfile('/usr/sbin/swapon'):
+            os.system('/usr/sbin/swapon -a')
 
         # Delete swap flagfile
         os.unlink('/.swapsize')
